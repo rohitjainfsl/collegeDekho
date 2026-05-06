@@ -138,7 +138,6 @@
 // });
 // console.log(difference);
 
-
 // String Functions: indexOf, lastIndexOf, slice, substring, split
 // Arrow Functions: push, pop, shift, unshift, splice, slice, join
 // for..of loop
@@ -147,5 +146,34 @@
 // Shallow Copy, Deep Copy
 // Spread, Destructuring
 
+// const str = "College Dekho Trainings";
+// // const output = str.lastIndexOf("e");
+// // const output = str.indexOf("e", 5);
+// const output = str.slice(-10, -5);
+// console.log(output); //
 
+// const str = "Jitendra sir, is present today.";
+// let a = str.indexOf("r");
+// let b = str.lastIndexOf("a");
+// const output = str.substring(a, b);
+// console.log(output);
 
+// console.log(a++ + ++b);
+
+// const names = ["Sanju", "KL", "Bumrah"];
+
+// // names.splice(2, 0, "Rohit Sharma");
+// names.splice(1, 1, "Rohit Sharma", "Virat Kohli");
+
+// names.splice(0,2);
+
+// console.log(names);
+
+// const email = "rohit@123.123@microsoft.com";
+// let at_the_rate = email.lastIndexOf("@");
+// let fullStop = email.lastIndexOf(".");
+
+// const result = email.slice(at_the_rate + 1,fullStop);
+// let output = result;
+
+// console.log(output);
