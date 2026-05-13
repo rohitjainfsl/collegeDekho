@@ -25,13 +25,12 @@ const categorySchema = new Schema({
   },
 });
 
-categorySchema.pre("save", function (next) {
+categorySchema.pre("save", function () {
   this.slug = this.name
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
-  next();
 });
 
 const Category = model("category", categorySchema);
@@ -79,13 +78,12 @@ const productSchema = new Schema({
   },
 });
 
-productSchema.pre("save", function (next) {
+productSchema.pre("save", function () {
   this.slug = this.name
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
-  next();
 });
 
 const Product = model("product", productSchema);
@@ -107,7 +105,7 @@ app.post("/category/add", async (req, res) => {
 
 app.get("/category/get", async (req, res) => {
   try {
-    const categories = await Category.find().select("name slug _id");
+    const categories = await Category.find().select("name slug");
     res.status(200).json({ categories });
   } catch (error) {
     res.status(500).json({ message: error.message });
