@@ -1,27 +1,25 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import api from "../api/axios";
+import { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import api from '../api/axios'
+import { useAuth } from '../context/AuthContext'
 
 export default function HomePage() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   const fetchProducts = async () => {
     try {
       const res = await api.get('/product/get')
       setProducts(res.data.message)
-    } catch (err) {
+    } catch {
       setError('Failed to load products.')
     } finally {
       setLoading(false)
     }
   }
 
-  useEffect(() => {
-    fetchProducts()
-  }, [])
+  useEffect(() => { fetchProducts() }, [])
 
   const handleDelete = async (id, name) => {
     const confirmed = window.confirm(`Delete "${name}"? This cannot be undone.`)
@@ -40,9 +38,6 @@ export default function HomePage() {
     return (
       <div className="text-center mt-20">
         <p className="text-gray-400 mb-4">No products yet.</p>
-        <Link to="/product/add" className="bg-gray-900 text-white px-5 py-2 rounded-md text-sm hover:bg-gray-700 transition-colors">
-          Add your first product
-        </Link>
       </div>
     )
 
@@ -51,11 +46,7 @@ export default function HomePage() {
       <h1 className="text-2xl font-bold text-gray-900 mb-6">All Products</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => (
-          <ProductCard
-            key={product._id}
-            product={product}
-            onDelete={handleDelete}
-          />
+          <ProductCard key={product._id} product={product} onDelete={handleDelete} />
         ))}
       </div>
     </>
@@ -65,11 +56,32 @@ export default function HomePage() {
 function ProductCard({ product, onDelete }) {
   const [hovered, setHovered] = useState(false)
   const navigate = useNavigate()
+  const { user } = useAuth()
 
   const discountPct =
     product.discountedPrice > 0 && product.originalPrice > product.discountedPrice
       ? Math.round(((product.originalPrice - product.discountedPrice) / product.originalPrice) * 100)
       : null
+
+  const addToCart = async (e) => {
+    e.stopPropagation()
+    try {
+      await api.post('/cart/add', { productId: product._id, quantity: 1 })
+      alert('Added to cart!')
+    } catch {
+      alert('Failed to add to cart.')
+    }
+  }
+
+  const addToWishlist = async (e) => {
+    e.stopPropagation()
+    try {
+      await api.post('/wishlist/add', { productId: product._id })
+      alert('Added to wishlist!')
+    } catch {
+      alert('Failed to add to wishlist.')
+    }
+  }
 
   return (
     <div
@@ -91,9 +103,9 @@ function ProductCard({ product, onDelete }) {
           </span>
         )}
 
-        {/* Hover action buttons */}
-        {hovered && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-3 transition-all">
+        {/* Admin hover overlay */}
+        {hovered && user?.role === 'admin' && (
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-3">
             <button
               onClick={() => navigate(`/product/edit/${product._id}`)}
               className="bg-white text-gray-900 text-sm font-medium px-4 py-2 rounded-md hover:bg-gray-100 transition-colors"
@@ -105,6 +117,24 @@ function ProductCard({ product, onDelete }) {
               className="bg-red-500 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-red-600 transition-colors"
             >
               Delete
+            </button>
+          </div>
+        )}
+
+        {/* User hover overlay */}
+        {hovered && user?.role === 'user' && (
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-3">
+            <button
+              onClick={addToCart}
+              className="bg-white text-gray-900 text-sm font-medium px-4 py-2 rounded-md hover:bg-gray-100 transition-colors"
+            >
+              + Cart
+            </button>
+            <button
+              onClick={addToWishlist}
+              className="bg-white text-gray-900 text-sm font-medium px-4 py-2 rounded-md hover:bg-gray-100 transition-colors"
+            >
+              ♡ Wishlist
             </button>
           </div>
         )}
