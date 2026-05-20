@@ -7,6 +7,9 @@ export default function EditProductPage() {
   const navigate = useNavigate()
   const [categories, setCategories] = useState([])
   const [form, setForm] = useState(null)
+  const [currentImages, setCurrentImages] = useState([])
+  const [imageFiles, setImageFiles] = useState([])
+  const [imagePreviews, setImagePreviews] = useState([])
   const [errors, setErrors] = useState({})
   const [submitting, setSubmitting] = useState(false)
 
@@ -17,11 +20,11 @@ export default function EditProductPage() {
     ]).then(([productRes, catRes]) => {
       const product = productRes.data.message.find((p) => p._id === id)
       if (!product) { navigate('/'); return }
+      setCurrentImages(product.images ?? [])
       setForm({
         name: product.name,
         originalPrice: product.originalPrice,
         discountedPrice: product.discountedPrice ?? 0,
-        image: product.image,
         description: product.description ?? '',
         category: product.category?._id ?? '',
       })
@@ -29,18 +32,23 @@ export default function EditProductPage() {
     })
   }, [id, navigate])
 
+  const handleChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    setErrors((prev) => ({ ...prev, [e.target.name]: undefined }))
+  }
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files)
+    setImageFiles(files)
+    setImagePreviews(files.map((f) => URL.createObjectURL(f)))
+  }
+
   const validate = () => {
     const e = {}
     if (!form.name.trim()) e.name = 'Name is required'
     if (!form.originalPrice) e.originalPrice = 'Original price is required'
-    if (!form.image.trim()) e.image = 'Image URL is required'
     if (!form.category) e.category = 'Category is required'
     return e
-  }
-
-  const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
-    setErrors((prev) => ({ ...prev, [e.target.name]: undefined }))
   }
 
   const handleSubmit = async (e) => {
@@ -49,10 +57,22 @@ export default function EditProductPage() {
     if (Object.keys(errs).length) { setErrors(errs); return }
     setSubmitting(true)
     try {
+      let images = currentImages
+
+      // If new files selected, upload them and replace current images
+      if (imageFiles.length > 0) {
+        const formData = new FormData()
+        formData.append('name', form.name)
+        imageFiles.forEach((file) => formData.append('images', file))
+        const uploadRes = await api.post('/upload', formData)
+        images = uploadRes.data.urls
+      }
+
       await api.put(`/product/update/${id}`, {
         ...form,
         originalPrice: Number(form.originalPrice),
         discountedPrice: Number(form.discountedPrice) || 0,
+        images,
       })
       navigate('/')
     } catch (err) {
@@ -97,10 +117,40 @@ export default function EditProductPage() {
           </select>
         </Field>
 
-        <Field label="Image URL" error={errors.image}>
-          <input name="image" value={form.image} onChange={handleChange}
-            className={input(errors.image)} />
-        </Field>
+        {/* Current image preview */}
+        <div>
+          <p className="block text-sm font-medium text-gray-700 mb-2">Current Image</p>
+          {currentImages.length > 0 ? (
+            <div className="flex gap-3 flex-wrap mb-3">
+              {currentImages.map((src, i) => (
+                <img key={i} src={src} alt={`Current ${i + 1}`}
+                  className="w-24 h-24 object-cover rounded-lg border border-gray-200" />
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-gray-400 mb-3">No image uploaded yet.</p>
+          )}
+
+          {/* Replace image input */}
+          <p className="block text-sm font-medium text-gray-700 mb-1">Replace Image <span className="text-gray-400 font-normal">(optional)</span></p>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            max="5"
+            onChange={handleImageChange}
+            className="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-gray-900 file:text-white hover:file:bg-gray-700 file:cursor-pointer cursor-pointer"
+          />
+          {/* New image preview */}
+          {imagePreviews.length > 0 && (
+            <div className="flex gap-3 mt-3 flex-wrap">
+              {imagePreviews.map((src, i) => (
+                <img key={i} src={src} alt={`New preview ${i + 1}`}
+                  className="w-24 h-24 object-cover rounded-lg border-2 border-gray-900" />
+              ))}
+            </div>
+          )}
+        </div>
 
         <Field label="Description" error={errors.description}>
           <textarea name="description" value={form.description} onChange={handleChange}
@@ -114,7 +164,7 @@ export default function EditProductPage() {
           </button>
           <button type="submit" disabled={submitting}
             className="flex-1 bg-gray-900 text-white py-2.5 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors disabled:opacity-50">
-            {submitting ? 'Saving…' : 'Save Changes'}
+            {submitting ? (imageFiles.length > 0 ? 'Uploading & Saving…' : 'Saving…') : 'Save Changes'}
           </button>
         </div>
       </form>

@@ -27,7 +27,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-[calc(100vh-70px)] bg-gray-50 flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white border border-gray-200 rounded-xl shadow-sm p-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Sign in</h1>
         <p className="text-sm text-gray-500 mb-8">Welcome back to ProductHub</p>

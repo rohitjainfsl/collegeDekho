@@ -49,7 +49,7 @@ export default function OrdersPage() {
                 {order.items.map((item, idx) => (
                   <div key={idx} className="flex items-center gap-3">
                     <img
-                      src={item.product?.image}
+                      src={item.product?.images?.[0]}
                       alt={item.product?.name}
                       className="w-10 h-10 object-cover rounded bg-gray-100 flex-shrink-0"
                       onError={(e) => { e.target.src = 'https://placehold.co/40x40?text=?' }}

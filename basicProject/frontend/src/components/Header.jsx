@@ -1,14 +1,25 @@
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useEffect } from "react";
+import axios from "axios";
 export default function Header() {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    async function fetchCartCount() {
+      const res = await axios.get("http://localhost:4000/cart", {
+        credentials: true,
+      });
+      console.log(res.data);
+    }
+    fetchCartCount();
+  }, []);
 
   const handleLogout = async () => {
-    await logout()
-    navigate('/')
-  }
+    await logout();
+    navigate("/");
+  };
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -38,7 +49,7 @@ export default function Header() {
             </>
           )}
 
-          {user?.role === 'user' && (
+          {user?.role === "user" && (
             <>
               <Link
                 to="/wishlist"
@@ -50,7 +61,7 @@ export default function Header() {
                 to="/cart"
                 className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
               >
-                Cart
+                Cart <span></span>
               </Link>
               <Link
                 to="/orders"
@@ -67,7 +78,7 @@ export default function Header() {
             </>
           )}
 
-          {user?.role === 'admin' && (
+          {user?.role === "admin" && (
             <>
               <Link
                 to="/product/add"
@@ -92,5 +103,5 @@ export default function Header() {
         </div>
       </div>
     </header>
-  )
+  );
 }

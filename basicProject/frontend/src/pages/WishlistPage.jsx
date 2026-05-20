@@ -52,7 +52,7 @@ export default function WishlistPage() {
               <div key={product._id} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                 <div className="h-48 bg-gray-100">
                   <img
-                    src={product.image}
+                    src={product.images?.[0]}
                     alt={product.name}
                     className="w-full h-full object-cover"
                     onError={(e) => { e.target.src = 'https://placehold.co/400x300?text=No+Image' }}

@@ -19,7 +19,10 @@ const productSchema = new Schema(
         message: 'Discounted price cannot exceed original price',
       },
     },
-    image: { type: String, required: true },
+    images: {
+      type: [String],
+      default: [],
+    },
     description: { type: String },
     slug: { type: String, unique: true },
     category: { type: Types.ObjectId, ref: 'category', required: true },

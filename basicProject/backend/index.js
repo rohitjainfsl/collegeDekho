@@ -10,6 +10,7 @@ import productRoutes from './routes/productRoutes.js'
 import cartRoutes from './routes/cartRoutes.js'
 import wishlistRoutes from './routes/wishlistRoutes.js'
 import orderRoutes from './routes/orderRoutes.js'
+import uploadRoutes from './routes/uploadRoutes.js'
 
 const app = express()
 
@@ -27,5 +28,6 @@ app.use('/product', productRoutes)
 app.use('/cart', cartRoutes)
 app.use('/wishlist', wishlistRoutes)
 app.use('/order', orderRoutes)
+app.use('/upload', uploadRoutes)
 
 app.listen(PORT, () => console.log('Server started at port ' + PORT))

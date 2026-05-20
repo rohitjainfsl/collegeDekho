@@ -19,9 +19,9 @@ import OrdersPage from './pages/OrdersPage'
 
 function Layout() {
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="bg-gray-50 text-gray-900">
       <Header />
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-4 py-4 sm:py-6">
         <Outlet />
       </main>
     </div>
@@ -35,7 +35,7 @@ const router = createBrowserRouter([
     children: [
       // Public
       { index: true, element: <HomePage /> },
-      { path: 'product/details/:id', element: <ProductDetailPage /> },
+      { path: 'product/details/:slug', element: <ProductDetailPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'register', element: <RegisterPage /> },
 
