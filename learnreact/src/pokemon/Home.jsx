@@ -15,9 +15,11 @@ async function fetchDataFromURL(url, nested = false) {
 
 function Home() {
   const [pokemons, setPokemons] = useState([]);
+  const [filteredPokemons, setFilteredPokemons] = useState([]);
   const [types, setTypes] = useState([]);
   const [limit, setLimit] = useState(20);
   const [offset, setOffset] = useState(0);
+  const [search, setSearch] = useState("");
 
   const url = `https://pokeapi.co/api/v2/pokemon?limit=${limit} &offset=${offset}`;
   const typesUrl = "https://pokeapi.co/api/v2/type?limit=21";
@@ -27,8 +29,36 @@ function Home() {
     fetchTypes();
   }, []);
 
-  function filterByType(e){
-    
+  function filterByType(e) {
+    setFilteredPokemons([]);
+    const copy = [...pokemons];
+    const selectedType = e.target.value;
+    if (selectedType === "all") {
+      console.log(pokemons);
+      setPokemons(pokemons);
+    } else {
+      //     const filteredPokemons = copy.map((obj) =>
+      //       obj.types.filter((pokemons,index) =>
+      //         pokemons.type.name  === selectedType
+
+      // ),
+      //     );
+      // setPokemons( "")
+
+      const filteredPok = [];
+      for (let i = 0; i < copy.length; i++) {
+        const typesArray = copy[i].types;
+        for (let j = 0; j < typesArray.length; j++) {
+          if (typesArray[j].type.name === selectedType) {
+            filteredPok.push(copy[i]);
+          }
+        }
+      }
+
+      setFilteredPokemons(filteredPok);
+
+      console.log(filteredPok);
+    }
   }
 
   async function fetchPokemons() {
@@ -49,6 +79,25 @@ function Home() {
     setTypes(types.results);
   }
 
+  function searchPokemon(e) {
+    const search = e.target.value.toLowerCase();
+
+    setSearch(search);
+    const filtered = pokemons.filter((pokemon) => {
+      return pokemon.name.toLowerCase().includes(search);
+    });
+
+    console.log(searchPokemon);
+    setFilteredPokemons(filtered);
+
+    // for (let i = 0; i < pokemons.length; i++) {
+    //   const targetValue = pokemons[i].name;
+    //   for (let j = 0; j < targetValue.length; j++) {
+    //     console.log(search);
+    //   }
+    // }
+  }
+
   console.log(pokemons);
 
   return (
@@ -56,7 +105,12 @@ function Home() {
       <header>
         <h1>Poke Universe</h1>
         <div className="info">
-          <input type="text" placeholder="Search Pokemons..." />
+          <input
+            type="text"
+            placeholder="Search Pokemons..."
+            value={search}
+            onChange={searchPokemon}
+          />
           <select name="" id="" onChange={filterByType}>
             <option value="">Filter By Type</option>
             <option value="all">All Pokemons</option>
@@ -71,21 +125,37 @@ function Home() {
         </div>
       </header>
       <main>
-        {pokemons.map((obj) => {
-          return (
-            <div key={obj.id} className="pokediv">
-              <img
-                src={obj.sprites.other.dream_world.front_default}
-                alt={obj.name}
-              />
-              <h3>{obj.name}</h3>
-              <p>
-                <strong>Type: </strong>
-                {obj.types.map((obj) => obj.type.name).join(", ")}
-              </p>
-            </div>
-          );
-        })}
+        {filteredPokemons.length > 0
+          ? filteredPokemons.map((obj) => {
+              return (
+                <div key={obj.id} className="pokediv">
+                  <img
+                    src={obj.sprites.other.dream_world.front_default}
+                    alt={obj.name}
+                  />
+                  <h3>{obj.name}</h3>
+                  <p>
+                    <strong>Type: </strong>
+                    {obj.types.map((obj) => obj.type.name).join(", ")}
+                  </p>
+                </div>
+              );
+            })
+          : pokemons.map((obj) => {
+              return (
+                <div key={obj.id} className="pokediv">
+                  <img
+                    src={obj.sprites.other.dream_world.front_default}
+                    alt={obj.name}
+                  />
+                  <h3>{obj.name}</h3>
+                  <p>
+                    <strong>Type: </strong>
+                    {obj.types.map((obj) => obj.type.name).join(", ")}
+                  </p>
+                </div>
+              );
+            })}
       </main>
     </>
   );
