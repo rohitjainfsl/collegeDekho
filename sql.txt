@@ -1,0 +1,76 @@
+use ecommerce;
+-- CREATE TABLE Company (
+--     CompanyID INT AUTO_INCREMENT PRIMARY KEY,
+--     CompanyName VARCHAR(100) NOT NULL,
+--     Address VARCHAR(255),=
+--     Email VARCHAR(100),
+--     Phone VARCHAR(20),
+--     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- );
+
+-- CREATE TABLE HR (
+--     HRID INT AUTO_INCREMENT PRIMARY KEY,
+--     HRName VARCHAR(100) NOT NULL,
+--     Email VARCHAR(100) UNIQUE NOT NULL,
+--     Phone VARCHAR(20),
+--     CompanyID INT NOT NULL,
+--     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+--     FOREIGN KEY (CompanyID)
+--     REFERENCES Company(CompanyID)
+-- );
+
+-- CREATE TABLE Users (
+--     UserID INT  PRIMARY KEY AUTO_INCREMENT,
+--     FullName VARCHAR(100) NOT NULL,
+--     Email VARCHAR(100) UNIQUE NOT NULL,
+--     Phone VARCHAR(20),
+--  
+--     CompanyID INT NOT NULL,
+--     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+--     FOREIGN KEY (CompanyID)
+--     REFERENCES Company(CompanyID)
+-- );
+
+
+-- INSERT INTO Company (CompanyName, Address, Email, Phone)
+-- VALUES
+-- ('TCS', 'Mumbai', 'info@tcs.com', '9876543210'),
+-- ('Infosys', 'Bangalore', 'contact@infosys.com', '9876543211');
+
+
+-- INSERT INTO HR (HRName, Email, Phone, CompanyID)
+-- VALUES
+-- ('Rahul Sharma', 'rahul@tcs.com', '9000000001', 1),
+-- ('Priya Gupta', 'priya@infosys.com', '9000000002', 2);
+
+
+-- INSERT INTO Users (FullName, Email, Phone, CompanyID)
+-- VALUES
+-- ('Amit Kumar', 'amit@gmail.com', '8000000001', 1),
+-- ('Neha Singh', 'neha@gmail.com', '8000000002', 1),
+-- ('Rohit Jain', 'rohit@gmail.com', '8000000003', 2);
+
+-- SELECT *
+-- FROM HR
+-- WHERE CompanyID IN (1);
+
+-- SELECT CompanyID,COUNT(*)AS total FROM Users GROUP BY CompanyID;
+
+-- ALTER TABLE Users
+-- ADD IsActive BOOLEAN NOT NULL DEFAULT 1;
+
+-- Select * from Users;
+-- update Users set Email = "rohitjainfsl@gmail.com" where UserID = 2;
+
+-- select CompanyID, count(*)As totalUsers from Users Group by CompanyID 
+-- Having Count(*)>7;
+
+-- SELECT u.FullName, c.CompanyName
+-- FROM Users u
+-- INNER JOIN Company c ON u.CompanyID = c.CompanyID;
+
+
+
+select * from Users where FullName like '%rohit%' 
