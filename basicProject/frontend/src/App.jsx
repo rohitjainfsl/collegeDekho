@@ -1,4 +1,10 @@
+import ProductGrid from "./components/ProductGrid";
+
 function App() {
-  return <h1>Hello World</h1>;
+  return (
+    <>
+      <ProductGrid />
+    </>
+  );
 }
 export default App;
