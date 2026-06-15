@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import axios from "axios";
 
 function Signup() {
   const [form, setForm] = useState({
@@ -7,12 +9,9 @@ function Signup() {
     email: "",
     password: "",
   });
-  const [arr, setArr] = useState([]);
 
-  useEffect(() => {
-    localStorage.setItem("formdata", JSON.stringify(arr));
-  }, [arr]);
-
+  const navigate = useNavigate();
+  const { setIsLoggedIn } = useAuth();
   
   function handlechange(e) {
     const { name, value } = e.target;
@@ -22,9 +21,30 @@ function Signup() {
     });
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    setArr([...arr, form]);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/auth/register",
+        {
+          name: form.name,
+          email: form.email,
+          password: form.password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.status === 201 || response.status === 200) {
+        setIsLoggedIn(true);
+        navigate("/profile");
+      }
+    } catch (err) {
+      console.error("Registration error:", err);
+      alert(err.response?.data?.message || "Registration failed!");
+    }
 
     setForm({
       name: "",
@@ -32,6 +52,7 @@ function Signup() {
       password: "",
     });
   }
+
   return (
     <>
       <h1>SignUp</h1>

@@ -2,7 +2,14 @@ import Product from "../models/Product.js";
 
 export const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find().populate("category", "name slug");
+    const queryParams = req.query;
+    queryParams.limit = req.query.limit ? Number(req.query.limit) : 3;
+    queryParams.page = req.query.page ? Number(req.query.page) : 1;
+
+    const products = await Product.find()
+      .skip(queryParams.limit * (queryParams.page - 1))
+      .limit(queryParams.limit)
+      .populate("category", "name slug");
     res.status(200).json({ message: products });
   } catch (err) {
     res.status(500).json({ message: err.message });

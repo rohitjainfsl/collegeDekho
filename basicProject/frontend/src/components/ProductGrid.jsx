@@ -16,9 +16,11 @@ function ProductGrid() {
   return (
     <div>
       <h1>Products</h1>
+<div className="product-wrapper">
       {products.map((product) => {
-        return <Product key={product.id} product={product} />;
+        return <Product key={product.id} product={product} />
       })}
+      </div>
     </div>
   );
 }

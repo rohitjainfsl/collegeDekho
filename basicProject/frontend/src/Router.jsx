@@ -3,6 +3,11 @@ import ProductDetails from "./pages/ProductDetails.jsx";
 import Home from "./Home.jsx";
 import App from "./App.jsx";
 import CartProvider from "./contexts/CartContext.jsx";
+import Signup from "./Auth/Signup.jsx";
+import Login from "./Auth/Login.jsx";
+import Profile from "./pages/Profile.jsx";
+import AuthProvider from "./contexts/AuthContext.jsx";
+import ProtectedRoute from "./pages/ProtectedRoute.jsx";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +22,22 @@ const router = createBrowserRouter([
         path: "/product/:id",
         element: <ProductDetails />,
       },
+      {
+        path: "/register",
+        element: <Signup />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/profile",
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 ]);
@@ -24,9 +45,11 @@ const router = createBrowserRouter([
 function Router() {
   return (
     <>
-      <CartProvider>
-        <RouterProvider router={router} />;
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <RouterProvider router={router} />
+        </CartProvider>
+      </AuthProvider>
     </>
   );
 }
