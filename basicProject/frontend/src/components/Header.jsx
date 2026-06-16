@@ -1,26 +1,26 @@
 import { useContext } from "react";
 import { cartContext } from "../contexts/CartContext";
-
+import {Link} from 'react-router-dom'
 function Header() {
   const { cart } = useContext(cartContext);
 
   return (
     <nav>
       <h1>
-        <a href="/">ECOMMERCE</a>
+        <Link to="/">ECOMMERCE</Link>
       </h1>
       <ul>
         <li>
-          <a href="/">
+          <Link to="/">
             Cart <span>{cart.length}</span>
-          </a>
+          </Link>
         </li>
 
         <li>
-          <a href="">Login</a>
+          <Link to="/login">Login</Link>
         </li>
         <li>
-          <a href="">Register</a>
+          <Link to="/register">Register</Link>
         </li>
       </ul>
     </nav>

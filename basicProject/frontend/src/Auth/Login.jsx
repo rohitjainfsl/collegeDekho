@@ -1,13 +1,15 @@
-import { useContext } from "react";
 import { useState } from "react";
-import { authContext } from "../contexts/AuthContext";
-
+import { useAuth } from "../contexts/AuthContext";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 function Login() {    
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
-  const {setIsLoggedIn} = useContext(authContext); 
+  const {setIsLoggedIn} = useAuth(); 
+  const navigate = useNavigate();
+
   function handlechange(e) {
     const { name, value } = e.target;
     setForm({
@@ -16,22 +18,21 @@ function Login() {
     });
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    let userData = JSON.parse(localStorage.getItem("formdata"));
-    userData.map((user) => {
-      if (user.email === form.email && user.password === form.password) {
+  async function handleSubmit(e) {
+    e.preventDefault() 
+    try {
+      const response = await axios.post("http://localhost:4000/auth/login",{
+        email:form.email,
+        password:form.password
+      },{withCredentials:true})
+      console.log(response)
+      if(response.statusText === "OK" && response.status === 200){
         setIsLoggedIn(true);
-        alert("Successfully Loggged IN");
-      } else {
-        alert("Invalid Credentials!");
-        setIsLoggedIn(false);
+        return navigate("/profile");
       }
-    });
-    setForm({
-      email: "",
-      password: "",
-    });
+    } catch (error) {
+      console.log("Login in failed", error)
+    }
   }
   return (
     <>
