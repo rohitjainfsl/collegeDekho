@@ -2,12 +2,12 @@ import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-function Login() {    
+function Login() {
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
-  const {setIsLoggedIn} = useAuth(); 
+  const { loading,setLoggedIn, setLoading } = useAuth();
   const navigate = useNavigate();
 
   function handlechange(e) {
@@ -18,20 +18,34 @@ function Login() {
     });
   }
 
+  if (loading) {
+    return <p>Loading...</p>
+  }
+
   async function handleSubmit(e) {
-    e.preventDefault() 
+    e.preventDefault();
+    setLoading(true);
     try {
-      const response = await axios.post("http://localhost:4000/auth/login",{
-        email:form.email,
-        password:form.password
-      },{withCredentials:true})
-      console.log(response)
-      if(response.statusText === "OK" && response.status === 200){
-        setIsLoggedIn(true);
+      const response = await axios.post(
+        "http://localhost:4000/auth/login",
+        {
+          email: form.email,
+          password: form.password,
+        },
+        { withCredentials: true },
+      );
+      // console.log(response);
+      if (response.statusText === "OK" && response.status === 200) {
+        setLoading(false);
+        // console.log("farhan");
+        setLoggedIn(true);
         return navigate("/profile");
       }
     } catch (error) {
-      console.log("Login in failed", error)
+      console.log("Login in failed", error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   }
   return (

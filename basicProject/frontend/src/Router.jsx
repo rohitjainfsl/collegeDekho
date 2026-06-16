@@ -4,9 +4,10 @@ import Home from "./Home.jsx";
 import App from "./App.jsx";
 import CartProvider from "./contexts/CartContext.jsx";
 import Login from "./Auth/Login.jsx";
-import Signup from "./Auth/Signup.jsx"
+import Signup from "./Auth/Signup.jsx";
 import AuthProvider from "./contexts/AuthContext.jsx";
 import Profile from "./pages/Profile.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -22,16 +23,20 @@ const router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <Login />
+        element: <Login />,
       },
       {
-      path: "/register",
-      element: <Signup/>
+        path: "/register",
+        element: <Signup />,
       },
       {
-        path:"/profile",
-        element:<Profile />
-      }
+        path: "/profile",
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 ]);
@@ -39,10 +44,10 @@ const router = createBrowserRouter([
 function Router() {
   return (
     <>
-    <AuthProvider>
-      <CartProvider>
-        <RouterProvider router={router} />;
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <RouterProvider router={router} />;
+        </CartProvider>
       </AuthProvider>
     </>
   );
